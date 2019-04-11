@@ -1,0 +1,37 @@
+{
+    "name": "okami-chen/symfony-event",
+    "authors": [
+        {
+            "name": "eward",
+            "email": "x25125x@126.com"
+        }
+    ],
+    "license": "MIT",
+    "type": "project",
+    "require": {
+        "php": ">=7.0.0",
+        "symfony/event-dispatcher": "^4.2",
+        "symfony/workflow": "^4.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "OkamiChen\\SymfonyEvent\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "OkamiChen\\SymfonyEvent\\SfEventProvider"
+            ],
+            "aliases": {
+            }
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

@@ -43,10 +43,10 @@ class Flow
      */
     public static function getInstance($name)
     {
-        if (!self::$instance[$name]) {
-            self::$instance = static::process($name);
+        if (!isset(self::$instance[$name])) {
+            self::$instance[$name] = static::process($name);
         }
-        return self::$instance;
+        return self::$instance[$name];
     }
 
 
@@ -71,8 +71,8 @@ class Flow
 
         foreach ($rows['transitions'] as $name => $tran) {
             if (is_array($tran['from'])) {
-                foreach ($tran['from'] as $k => $v) {
-                    $definitionBuilder->addTransition(new Transition($name, $v, $tran['to'][$k] ?? $tran['to']));
+                foreach ($tran['from'] as $k => $from) {
+                    $definitionBuilder->addTransition(new Transition($name, $from, $tran['to'][$k] ?? $tran['to']));
                 }
                 continue;
             }
@@ -83,6 +83,6 @@ class Flow
 
         $marking = new SingleStateMarkingStore($config['name']);
 
-        return new Workflow($definition, $marking, app()->make('sfevent'), 'order');
+        return new Workflow($definition, $marking, app()->make('sfevent'), $node);
     }
 }

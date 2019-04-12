@@ -1,7 +1,17 @@
 # Laravel Symfony Event
 
 
-## workflow example
+## Molde 
+
+```php
+
+use OkamiChen\SymfonyEvent\FlowTrait;
+
+protected $flowName = 'order';
+
+```
+
+## example
 
 ```yaml
 

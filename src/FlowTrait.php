@@ -54,10 +54,19 @@ trait FlowTrait
     }
 
     /**
-     * 进入工作流
+     * @param $transitionName
+     * @return \Symfony\Component\Workflow\TransitionBlockerList
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function buildTransitionBlockerList($transitionName){
+        return $this->getWorkflow()->buildTransitionBlockerList($this, $transitionName);
+    }
+
+
+    /**
      * @param $transitionName
      * @return \Symfony\Component\Workflow\Marking
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Exception
      */
     public function apply($transitionName)
     {
@@ -66,7 +75,7 @@ trait FlowTrait
             $marking = $this->getWorkflow()->apply($this, $transitionName);
             $this->save();
             return $marking;
-        } catch (NotEnabledTransitionException $ex) {
+        } catch (\Exception $ex) {
 
             if (!$ex->getTransitionBlockerList()->has('custom')) {
                 throw $ex;
@@ -74,7 +83,7 @@ trait FlowTrait
 
             $rows = $ex->getTransitionBlockerList();
             foreach ($rows as $key => $row) {
-                throw new \Exception($row->getMessage(), $row->getCode());
+                throw new \Exception($row->getMessage());
             }
         }
     }

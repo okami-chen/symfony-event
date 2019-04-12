@@ -1,7 +1,7 @@
-# Laravel Symfony Event
+# Laravel Symfony Event && Symfony WorkFlow
 
 
-## Molde 
+## Model 
 
 ```php
 
@@ -11,7 +11,7 @@ protected $flowName = 'order';
 
 ```
 
-## example
+## 工作流配置
 
 ```yaml
 

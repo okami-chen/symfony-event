@@ -11,7 +11,8 @@
     "require": {
         "php": ">=7.0.0",
         "symfony/event-dispatcher": "^4.2",
-        "symfony/workflow": "^4.2"
+        "symfony/workflow": "^4.2",
+        "symfony/stopwatch": "^4.2"
     },
     "autoload": {
         "psr-4": {

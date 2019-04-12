@@ -2,11 +2,16 @@
 
 namespace OkamiChen\SymfonyEvent;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
+use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class SfEventProvider extends ServiceProvider
 {
+
+    protected $defer = true;
 
     /**
      * The event handler mappings for the application.
@@ -22,6 +27,11 @@ class SfEventProvider extends ServiceProvider
      */
     protected $subscribe = [];
 
+    public function provides()
+    {
+        return ['sfevent'];
+    }
+
     /**
      * Register services.
      *
@@ -29,7 +39,18 @@ class SfEventProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('sfevent', EventDispatcher::class);
+
+        $this->app->singleton('sfevent', function () {
+
+            $logger = null;
+
+            if ($this->app['config']['app']['debug']) {
+                $channel = $this->app['config']['sfevent']['logger'] ?? 'daily';
+                $logger = logger()->stack([$channel]);
+            }
+
+            return new TraceableEventDispatcher(new EventDispatcher(), new Stopwatch(), $logger);
+        });
     }
 
 
@@ -38,14 +59,32 @@ class SfEventProvider extends ServiceProvider
      */
     public function boot()
     {
-        foreach ($this->listen as $event => $listeners) {
-            foreach (array_unique($listeners) as $listener) {
-                $this->app->make('sfevent')->addListener($event, $listener);
+
+        if ($this->app->runningInConsole()) {
+            $this->publishes([__DIR__.'/../config' => config_path()], 'symfony-event');
+        }
+
+
+        $row = config('sfevent');
+
+        /**
+         * @var $sfevent TraceableEventDispatcher
+         */
+        $sfevent = $this->app->make('sfevent');
+
+        if (count(Arr::get($row, 'listener', []))) {
+            foreach ($row['listener'] as $event => $listeners) {
+                foreach (array_unique($listeners) as $listener) {
+                    $sfevent->addListener($event, (new $listener));
+                }
             }
         }
 
-        foreach ($this->subscribe as $subscriber) {
-            $this->app->make('sfevent')->addSubscriber($subscriber);
+        if (count(Arr::get($row, 'subscriber', []))) {
+            foreach ($row['subscriber'] as $subscriber) {
+                $sfevent->addSubscriber((new $subscriber));
+            }
         }
+
     }
 }

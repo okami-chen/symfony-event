@@ -3,7 +3,7 @@
 
 return [
 
-    'logger'    => 'sfevent', //logging channels name
+    'logger' => 'sfevent', //logging channels name
 
     'listener' => [
         //symfony event listener
@@ -11,5 +11,10 @@ return [
 
     'subscriber' => [
         //symfony event subscriber
-    ]
+    ],
+
+    'flow' => [
+        'name'  => 'state',
+        'path'  => base_path('data/workflow')
+    ],
 ];

@@ -61,7 +61,7 @@ class SfEventProvider extends ServiceProvider
     {
 
         if ($this->app->runningInConsole()) {
-            $this->publishes([__DIR__.'/../config' => config_path()], 'symfony-event');
+            $this->publishes([__DIR__.'/../config' => config_path()], 'laravel-symfony-event');
         }
 
 
